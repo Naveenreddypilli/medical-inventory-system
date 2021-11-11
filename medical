@@ -1,0 +1,357 @@
+import mysql.connector
+from tkinter import *
+from tkinter import messagebox
+top= Tk()
+top.geometry("1280x720")
+top.title("Medical Inventory System")
+top['bg']="#151515"
+
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="root",
+  database="medicalinv"
+)
+
+mycursor = mydb.cursor()
+mycursor1 = mydb.cursor()
+
+
+    
+
+  
+    
+def addinv():
+
+    addinvwindows = Toplevel(top)
+    addinvwindows.geometry("1280x720")
+    addinvwindows.title("Add Item")
+    addinvwindows['bg']="#151515"
+    addinvtitle=Label(addinvwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+    addinvsubtitle=Label(addinvwindows, text="Add Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+    frame1 = Frame(addinvwindows,bg="#151515")
+    
+    frame1.pack(side=BOTTOM,pady=200)
+    
+    
+    l1=Label(frame1, text="\nEnter Name:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=0,column=0,sticky='w')
+   
+    
+   
+    v1=StringVar()
+    e1=Entry(frame1,textvariable=v1,bg="#151515",fg="#ffffff",width=40).grid(row=1,column=0,sticky='w')
+ 
+    
+    l2=Label(frame1, text="Enter type:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=2,column=0,sticky='w')
+    v2=IntVar()
+    r1=Radiobutton(frame1,text="Medicine",variable=v2,value=1,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=0,sticky='w')
+    r2=Radiobutton(frame1,text="Injection",variable=v2,value=2,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=1,sticky='w')
+    r3=Radiobutton(frame1,text="other products",variable=v2,value=3,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=2,sticky='w')
+   
+    
+    l3=Label(frame1, text="Enter quantity:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=4,column=0,sticky='w')
+    v3=StringVar()
+    e3=Entry(frame1,textvariable=v3,bg="#151515",fg="#ffffff",width=40).grid(row=5,column=0,sticky='w')
+    
+    l4=Label(frame1, text="Enter price:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=6,column=0,sticky='w')
+    v4=StringVar()
+    e4=Entry(frame1,textvariable=v4,bg="#151515",fg="#ffffff",width=40).grid(row=7,column=0,sticky='w')
+    
+    c=Button(frame1,text="Add",command=lambda:additemtodb(v1.get(),v2.get(),v3.get(),v4.get()), bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=1)
+    c1=Button(frame1,text="Close",command=addinvwindows.destroy, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=2)
+    
+   
+    def additemtodb(a1,a2,a3,a4):
+    
+        sql = "INSERT INTO inventory (name,type,quantity,price) VALUES (%s, %s, %s, %s)"
+        val = (a1,a2,a3,a4)
+        mycursor.execute(sql,(val))
+        mydb.commit()  
+        messagebox.showinfo("Successfull","Data Added Successfully")
+        addinvwindows.destroy()
+
+
+    
+def removeinv():
+    removeinvwindows = Toplevel(top)
+    removeinvwindows.geometry("1280x720")
+    removeinvwindows.title("Remove Item")
+    removeinvwindows['bg']="#151515"
+    removeinvtitle=Label(removeinvwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+    removeinvsubtitle=Label(removeinvwindows, text="Remove Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+    frame2 = Frame(removeinvwindows,bg="#151515")
+    
+    frame2.pack(side=BOTTOM,pady=200)
+     
+    
+
+    mycursor.execute("SELECT * FROM inventory")
+
+    myresult = mycursor.fetchall()
+    i=1
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Sno",relief='ridge', anchor="w").grid(row=0, column=0) 
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Name",relief='ridge', anchor="w").grid(row=0, column=1) 
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Type",relief='ridge', anchor="w").grid(row=0, column=2) 
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Quantity",relief='ridge', anchor="w").grid(row=0, column=3) 
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Price",relief='ridge', anchor="w").grid(row=0, column=4) 
+    e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Date",relief='ridge', anchor="w").grid(row=0, column=5) 
+    for inventory in myresult: 
+        
+        for j in range(len(inventory)):
+            e = Label(frame2,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text=inventory[j],relief='ridge', anchor="w")  
+            e.grid(row=i, column=j) 
+            
+            
+            
+            
+           
+        e = Button(frame2,width=5,text='Del',relief='ridge',bg="red",fg="#ffffff",activebackground="#db630d",activeforeground="white",font=('Helvetica 13 bold'),anchor="w",command=lambda k=inventory[0]:delete_data(k))
+        e.grid(row=i, column=9)     
+        i=i+1
+    
+        
+        def delete_data(s_id): 
+    
+            #my_var=msg.askyesnocancel("Delete Record",
+             #  "Are you sure ? ",icon='warning')
+            
+            #if my_var:
+                query="DELETE FROM  inventory WHERE sno=%s"
+                my_data=[s_id]
+                mycursor.execute(query,my_data)
+                print("Row Deleted  ")
+                removeinvwindows.destroy()
+            
+def updateinv():
+    updateinvwindows = Toplevel(top)
+    updateinvwindows.geometry("1280x720")
+    updateinvwindows.title("Remove Item")
+    updateinvwindows['bg']="#151515"
+    updateinvtitle=Label(updateinvwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+    updateinvsubtitle=Label(updateinvwindows, text="Updating an Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+    frame3 = Frame(updateinvwindows,bg="#151515")
+    
+    frame3.pack(side=BOTTOM,pady=200)
+     
+    
+
+    mycursor.execute("SELECT * FROM inventory")
+
+    myresult = mycursor.fetchall()
+    i=1
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Sno",relief='ridge', anchor="w").grid(row=0, column=0) 
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Name",relief='ridge', anchor="w").grid(row=0, column=1) 
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Type",relief='ridge', anchor="w").grid(row=0, column=2) 
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Quantity",relief='ridge', anchor="w").grid(row=0, column=3) 
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Price",relief='ridge', anchor="w").grid(row=0, column=4) 
+    e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text="Date",relief='ridge', anchor="w").grid(row=0, column=5)  
+    for inventory in myresult: 
+        for j in range(len(inventory)):
+            e = Label(frame3,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text=inventory[j],relief='ridge', anchor="w")  
+            e.grid(row=i, column=j) 
+            
+            
+            
+            
+       
+        e = Button(frame3,width=6,text='Update',relief='ridge',bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",font=('Helvetica 13 bold'),anchor="w",command=lambda k=inventory[0]:update_data(k))
+        
+        e.grid(row=i, column=6)     
+        i=i+1
+    
+        
+        def update_data(s_id): 
+    
+            update1invwindows = Toplevel(top)
+            update1invwindows.geometry("1280x720")
+            update1invwindows.title("Update Item")
+            update1invwindows['bg']="#151515"
+            update1invtitle=Label(update1invwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+            update1invsubtitle=Label(update1invwindows, text="Update Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+            frame4 = Frame(update1invwindows,bg="#151515")
+    
+            frame4.pack(side=BOTTOM,pady=200)
+        
+         
+            query="SELECT * FROM inventory WHERE sno=%s"
+            print(s_id)
+            my_data=[s_id]
+            mycursor.execute(query,my_data)
+            row=mycursor.fetchone()
+           
+        
+            l1=Label(frame4, text="\nEnter Name:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=0,column=0,sticky='w')
+            v1=StringVar()
+            v1.set(row[1])
+            e1=Entry(frame4,textvariable=v1,bg="#151515",fg="#ffffff",width=40).grid(row=1,column=0,sticky='w')
+    
+            l2=Label(frame4, text="Enter type:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=2,column=0,sticky='w')
+            v2=IntVar()
+            v2.set(row[2])
+            r1=Radiobutton(frame4,text="Medicine",variable=v2,value=1,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=0,sticky='w')
+            r2=Radiobutton(frame4,text="Injection",variable=v2,value=2,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=1,sticky='w')
+            r3=Radiobutton(frame4,text="other products",variable=v2,value=3,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=2,sticky='w')
+    
+            l3=Label(frame4, text="Enter quantity:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=4,column=0,sticky='w')
+            v3=StringVar()
+            v3.set(row[3])
+            e3=Entry(frame4,textvariable=v3,bg="#151515",fg="#ffffff",width=40).grid(row=5,column=0,sticky='w')
+    
+            l4=Label(frame4, text="Enter price:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=6,column=0,sticky='w')
+            v4=StringVar()
+            v4.set(row[4])
+            e4=Entry(frame4,textvariable=v4,bg="#151515",fg="#ffffff",width=40).grid(row=7,column=0,sticky='w')
+            v5=StringVar()
+            v5.set(row[0])
+            c=Button(frame4,text="Update",command=lambda:updateitemtodb(v1.get(),v2.get(),v3.get(),v4.get(),v5.get()), bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=1)
+            c1=Button(frame4,text="Close",command=update1invwindows.destroy, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=2)
+            
+            def updateitemtodb(a1,a2,a3,a4,a5):
+    
+                sql = "UPDATE inventory SET name=%s, type=%s, quantity=%s, price=%s WHERE sno=%s"
+                val = (a1,a2,a3,a4,a5)
+                mycursor.execute(sql,val)
+                mydb.commit()  
+                messagebox.showinfo("Successfull","Data Updated Successfully")
+                updateinvwindows.destroy()
+                update1invwindows.destroy()
+        
+                
+                
+                
+def searchinv():
+            searchinvwindows = Toplevel(top)
+            searchinvwindows.geometry("1280x720")
+            searchinvwindows.title("Add Item")
+            searchinvwindows['bg']="#151515"
+            searchinvtitle=Label(searchinvwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+            searchinvsubtitle=Label(searchinvwindows, text="Search Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+            frame5 = Frame(searchinvwindows,bg="#151515")
+    
+            frame5.pack(side=BOTTOM,pady=200)
+        
+        
+            l1=Label(frame5, text="Enter Name",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=0,column=0)
+            v1=StringVar()
+            e1=Entry(frame5,textvariable=v1,bg="#151515",fg="#ffffff",width=40).grid(row=0,column=1)
+            c=Button(frame5,text="Search",command=lambda:searchitemdb(v1.get()), bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=0,column=4)
+            c1=Button(frame5,text="close",command=searchinvwindows.destroy, bg="red",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=0,column=5)
+            
+            def searchitemdb(a1):
+                
+                #query="SELECT * FROM inventory WHERE sno=%s OR name=%s OR type=%s OR quantity=%s OR price=%s"
+                query="SELECT * FROM inventory WHERE sno=%s OR name=%s"
+                my_data=[a1,a1]
+                mycursor.execute(query,my_data)
+                myresult = mycursor.fetchall()
+                print(myresult)
+                i=3
+                
+                for inventory in myresult: 
+                    for j in range(len(inventory)):
+                        e = Label(frame5,width=9,font=('Helvetica 13 bold'),fg='#ffffff',bg="#151515", text=inventory[j],relief='ridge', anchor="w")  
+                        e.grid(row=i,column=j,sticky="w") 
+                   
+                    e = Button(frame5,width=6,text='Update',relief='ridge',bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",font=('Helvetica 13 bold'),anchor="w",command=lambda k=inventory[0]:update_data(k))  
+                    e.grid(row=i, column=6)  
+                    e = Button(frame5,width=6,text='Delete',relief='ridge',bg="red",fg="#ffffff",activebackground="#db630d",activeforeground="white",font=('Helvetica 13 bold'),anchor="w",command=lambda k=inventory[0]:delete_data(k))  
+                    e.grid(row=i, column=7)  
+                    i=i+1
+                def update_data(s_id): 
+    
+                    update1invwindows = Toplevel(top)
+                    update1invwindows.geometry("1280x720")
+                    update1invwindows.title("Update Item")
+                    update1invwindows['bg']="#151515"
+                    update1invtitle=Label(update1invwindows, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+                    update1invsubtitle=Label(update1invwindows, text="Update Item",font="AdobeGothicStd-Bold 30",bg="#151515",fg="#ffffff").place(x=550,y=130)
+                    frame6 = Frame(update1invwindows,bg="#151515")
+    
+                    frame6.pack(side=BOTTOM,pady=200)
+        
+         
+                    query="SELECT * FROM inventory WHERE sno=%s"
+                    print(s_id)
+                    my_data=[s_id]
+                    mycursor.execute(query,my_data)
+                    row=mycursor.fetchone()
+           
+        
+                    l1=Label(frame6, text="\nEnter Name:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=0,column=0,sticky='w')
+                    v1=StringVar()
+                    v1.set(row[1])
+                    e1=Entry(frame6,textvariable=v1,bg="#151515",fg="#ffffff",width=40).grid(row=1,column=0,sticky='w')
+    
+                    l2=Label(frame6, text="Enter type:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=2,column=0,sticky='w')
+                    v2=IntVar()
+                    v2.set(row[2])
+                    r1=Radiobutton(frame6,text="Medicine",variable=v2,value=1,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=0,sticky='w')
+                    r2=Radiobutton(frame6,text="Injection",variable=v2,value=2,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=1,sticky='w')
+                    r3=Radiobutton(frame6,text="other products",variable=v2,value=3,bg="#151515",fg="#cdcdcd",selectcolor="red",activeforeground="white",activebackground="#151515",font=('Helvetica 13 bold')).grid(row=3,column=2,sticky='w')
+    
+                    l3=Label(frame6, text="Enter quantity:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=4,column=0,sticky='w')
+                    v3=StringVar()
+                    v3.set(row[3])
+                    e3=Entry(frame6,textvariable=v3,bg="#151515",fg="#ffffff",width=40).grid(row=5,column=0,sticky='w')
+    
+                    l4=Label(frame6, text="Enter price:",bg="#151515",fg="#cdcdcd",font=('Helvetica 13 bold')).grid(row=6,column=0,sticky='w')
+                    v4=StringVar()
+                    v4.set(row[4])
+                    e4=Entry(frame6,textvariable=v4,bg="#151515",fg="#ffffff",width=40).grid(row=7,column=0,sticky='w')
+                    v5=StringVar()
+                    v5.set(row[0])
+                    c=Button(frame6,text="Update",command=lambda:updateitemtodb(v1.get(),v2.get(),v3.get(),v4.get(),v5.get()), bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=1)
+                    c1=Button(frame6,text="Close",command=update1invwindows.destroy, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).grid(row=10,column=2)
+            
+                    def updateitemtodb(a1,a2,a3,a4,a5):
+    
+                        sql = "UPDATE inventory SET name=%s, type=%s, quantity=%s, price=%s WHERE sno=%s"
+                        val = (a1,a2,a3,a4,a5)
+                        mycursor.execute(sql,val)
+                        mydb.commit()  
+                        messagebox.showinfo("Successfull","Data Updated Successfully")
+                        
+                        update1invwindows.destroy()
+                        searchinvwindows.destroy()
+                def delete_data(s_id): 
+    
+                    #my_var=msg.askyesnocancel("Delete Record",
+                     #  "Are you sure ? ",icon='warning')
+            
+                    #if my_var:
+                    query="DELETE FROM  inventory WHERE sno=%s"
+                    my_data=[s_id]
+                    mycursor.execute(query,my_data)
+                    print("Row Deleted  ")
+                    searchinvwindows.destroy()
+                    
+     
+                    
+                
+            
+title=Label(top, text="MEDICAL INVENTORY SYSTEM",font="AdobeGothicStd-Bold 50",bg="#151515",fg="#ffffff").place(x=180,y=50)
+
+    
+b=Button(top,text="Add New Item",command=addinv, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).place(x=200, y=210)
+b1=Button(top,text="Remove Item",command=removeinv , bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).place(x=400, y=210)
+b2=Button(top,text="Update Item",command=updateinv, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).place(x=600, y=210)
+b3=Button(top,text="Search Item",command=searchinv, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).place(x=800, y=210)
+
+b5=Button(top,text="Quit", command=top.destroy, bg="#fa6800",fg="#ffffff",activebackground="#db630d",activeforeground="white",width=10,font=('Helvetica 13 bold')).place(x=1000, y=210)
+
+
+    
+    
+    
+   
+    
+
+
+
+
+top.mainloop()
+
+
+
+
